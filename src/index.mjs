@@ -1,8 +1,8 @@
-import express from "express";
+import express, { json, request, response } from "express";
 // import demoUserData from "./data";
 
 const app = express();
-
+app.use(express.json())
 const PORT = process.env.PORT || 3000;
 
 const demoUserData = [
@@ -103,32 +103,45 @@ app.get('/api/users/:id', (request, response) => {
         response.send(users)
     }
 })
+app.post('/api/users', (request, response) => {
+    const { body } = request;
+    console.log(body)
+    const newUser = {
+        userId: demoUserData[demoUserData.length - 1].userId + 1,
+        ...body
+    };
 
-app.get('/api/products', (request, response) => {
-    response.send([
-        {
-            id: '1',
-            ProductName: 'Pritam',
-            Status: 'Processing'
-        },
-        {
-            id: '2',
-            ProductName: 'Jack',
-            Status: 'Delivered'
-        },
-        {
-            id: '3',
-            ProductName: 'Donald',
-            Status: 'Processing'
-        },
-        {
-            id: '4',
-            ProductName: 'Eren',
-            Status: 'On the Way'
-        }
-    ])
+    demoUserData.push(newUser);
+    return response.status(201).send(newUser);
 })
 
+
+
+
+// app.get('/api/products', (request, response) => {
+//     response.send([
+//         {
+//             id: '1',
+//             ProductName: 'Pritam',
+//             Status: 'Processing'
+//         },
+//         {
+//             id: '2',
+//             ProductName: 'Jack',
+//             Status: 'Delivered'
+//         },
+//         {
+//             id: '3',
+//             ProductName: 'Donald',
+//             Status: 'Processing'
+//         },
+//         {
+//             id: '4',
+//             ProductName: 'Eren',
+//             Status: 'On the Way'
+//         }
+//     ])
+// })
 
 app.listen(PORT, () => {
     console.log(`Your Server is running on port ${PORT}`)
