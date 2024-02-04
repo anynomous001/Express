@@ -78,10 +78,10 @@ app.get('/', (request, response) => {
 })
 app.get('/api/users', (request, response) => {
     const { query: { filter, value } } = request;
-
+    console.log(filter, value)
     if (filter && value) {
         // Use dynamic property access to filter users based on the specified property and value
-        const filteredUsers = demoUserData.filter(user => user[filter] > value);
+        const filteredUsers = demoUserData.filter(user => user[filter] == value);
         response.send(filteredUsers);
     } else {
         response.send(demoUserData);
