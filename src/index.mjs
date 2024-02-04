@@ -27,7 +27,7 @@ const mockUsers = [
 ]
 
 app.get('/', (request, response) => {
-    response.statusCode(200).send('hello world')
+    response.status(200).send('hello world')
 })
 app.get('/api/users', (request, response) => {
     response.send(mockUsers)
