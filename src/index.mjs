@@ -72,26 +72,30 @@ const demoUserData = [
     }
 ];
 
-// const resolveFindIndex = (request, response, next) => {
-//     const { params: { id } } = request
-//     const parseId = parseInt(id)
+const resolveFindIndex = (request, response, next) => {
+    const { params: { id } } = request
+    const parseId = parseInt(id)
 
-//     if (isNaN(parseId)) return response.status(400).send('Bad Request')
+    if (isNaN(parseId)) return response.status(400).send('Bad Request')
 
-//     const findIndex = demoUserData.findIndex((user) => user.userId === parseId)
+    const findIndex = demoUserData.findIndex((user) => user.userId === parseId)
 
-//     if (findIndex == -1) return response.status(404)
+    if (findIndex == -1) return response.status(404)
 
-//     request.findIndex = findIndex
-//     next()
-// }
+    request.findIndex = findIndex
+    next()
+}
 
 app.get('/', (request, response) => {
     response.statusCode(200).send('hello world')
 })
-app.get('/api/users', (request, response) => {
+
+/*Get Request with specific id */
+
+app.get('/api/users', resolveFindIndex, (request, response) => {
+
     const { query: { filter, value } } = request;
-    console.log(filter, value)
+
     if (filter && value) {
         // Use dynamic property access to filter users based on the specified property and value
         const filteredUsers = demoUserData.filter(user => user[filter] == value);
@@ -101,21 +105,14 @@ app.get('/api/users', (request, response) => {
     }
 });
 
+/*Get Request with specific id */
 
-app.get('/api/users/:id', (request, response) => {
-    const parseId = parseInt(request.params.id)
-    const users = demoUserData.find(user => user.userId === parseId)
-
-    if (isNaN(parseId)) {
-        response.status(400).send('Bad Request. Invalid Id')
-    }
-
-    if (!users) {
-        response.status(404).send("Users Don't Exist")
-    } else {
-        response.send(users)
-    }
+app.get('/api/users/:id', resolveFindIndex, (request, response) => {
+    const { findIndex } = request
+    const users = demoUserData[findIndex]
+    return response.send(users)
 })
+/* Post Request */
 app.post('/api/users', (request, response) => {
     const { body } = request;
     console.log(body)
@@ -128,43 +125,23 @@ app.post('/api/users', (request, response) => {
     return response.status(201).send(newUser);
 })
 
-
+/* Put Request */
 app.put('/api/users/:id', resolveFindIndex, (request, response) => {
-    const { body } = request
-    const parseId = parseInt(id)
-
-    if (isNaN(parseId)) return response.status(400).send('Bad Request')
-
-    const findIndex = demoUserData.findIndex((user) => user.userId === parseId)
-
-    if (findIndex == -1) return response.status(404)
-    demoUserData[findIndex] = { userId: parseId, ...body }
-
+    const { body, findIndex } = request
+    demoUserData[findIndex] = { userId: findIndex, ...body }
     return response.sendStatus(200)
 })
 
-app.patch('/api/users/:id', (request, response) => {
-    const { params: { id },
-        body } = request
-    const parseId = parseInt(id)
-
-    if (isNaN(parseId)) return response.sendStatus(400)
-
-    const findIndex = demoUserData.findIndex((user => user.userId === parseId))
-    if (findIndex === -1) return response.sendStatus(404)
+/* Patch Request */
+app.patch('/api/users/:id', resolveFindIndex, (request, response) => {
+    const { body, findIndex } = request
     demoUserData[findIndex] = { ...demoUserData[findIndex], ...body }
-
     return response.sendStatus(202)
 })
 
-app.delete('/api/users/:id', (request, response) => {
-    const { params: { id } } = request
-    const parseId = parseInt(id)
-
-    if (isNaN(parseId)) return response.sendStatus(400)
-    const findIndex = demoUserData.findIndex((user => user.userId === parseId))
-    if (findIndex === -1) return response.sendStatus(404)
-
+/* Delete Request */
+app.delete('/api/users/:id', resolveFindIndex, (request, response) => {
+    const { findIndex } = request
     demoUserData.splice(findIndex, 1)
     return response.sendStatus(200)
 })
