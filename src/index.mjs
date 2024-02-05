@@ -72,6 +72,19 @@ const demoUserData = [
     }
 ];
 
+// const resolveFindIndex = (request, response, next) => {
+//     const { params: { id } } = request
+//     const parseId = parseInt(id)
+
+//     if (isNaN(parseId)) return response.status(400).send('Bad Request')
+
+//     const findIndex = demoUserData.findIndex((user) => user.userId === parseId)
+
+//     if (findIndex == -1) return response.status(404)
+
+//     request.findIndex = findIndex
+//     next()
+// }
 
 app.get('/', (request, response) => {
     response.statusCode(200).send('hello world')
@@ -116,7 +129,45 @@ app.post('/api/users', (request, response) => {
 })
 
 
+app.put('/api/users/:id', resolveFindIndex, (request, response) => {
+    const { body } = request
+    const parseId = parseInt(id)
 
+    if (isNaN(parseId)) return response.status(400).send('Bad Request')
+
+    const findIndex = demoUserData.findIndex((user) => user.userId === parseId)
+
+    if (findIndex == -1) return response.status(404)
+    demoUserData[findIndex] = { userId: parseId, ...body }
+
+    return response.sendStatus(200)
+})
+
+app.patch('/api/users/:id', (request, response) => {
+    const { params: { id },
+        body } = request
+    const parseId = parseInt(id)
+
+    if (isNaN(parseId)) return response.sendStatus(400)
+
+    const findIndex = demoUserData.findIndex((user => user.userId === parseId))
+    if (findIndex === -1) return response.sendStatus(404)
+    demoUserData[findIndex] = { ...demoUserData[findIndex], ...body }
+
+    return response.sendStatus(202)
+})
+
+app.delete('/api/users/:id', (request, response) => {
+    const { params: { id } } = request
+    const parseId = parseInt(id)
+
+    if (isNaN(parseId)) return response.sendStatus(400)
+    const findIndex = demoUserData.findIndex((user => user.userId === parseId))
+    if (findIndex === -1) return response.sendStatus(404)
+
+    demoUserData.splice(findIndex, 1)
+    return response.sendStatus(200)
+})
 
 // app.get('/api/products', (request, response) => {
 //     response.send([
