@@ -1,4 +1,5 @@
 import express, { json, request, response } from "express";
+import { query, validationResult } from "express-validator";
 // import demoUserData from "./data";
 
 const app = express();
@@ -76,6 +77,7 @@ const resolveFindIndex = (request, response, next) => {
     const { params: { id } } = request
     const parseId = parseInt(id)
 
+
     if (isNaN(parseId)) return response.status(400).send('Bad Request')
 
     const findIndex = demoUserData.findIndex((user) => user.userId === parseId)
@@ -92,18 +94,28 @@ app.get('/', (request, response) => {
 
 /*Get Request with specific id */
 
-app.get('/api/users', resolveFindIndex, (request, response) => {
+app.get('/api/users',
+    query('filter')
+        .isString()
+        .notEmpty()
+        .withMessage('Filter must have a value')
+        .isLength({ min: 5, max: 10 })
+        .withMessage('Filter must have a value between 5 - 10 characters'),
 
-    const { query: { filter, value } } = request;
+    (request, response) => {
 
-    if (filter && value) {
-        // Use dynamic property access to filter users based on the specified property and value
-        const filteredUsers = demoUserData.filter(user => user[filter] == value);
-        response.send(filteredUsers);
-    } else {
-        response.send(demoUserData);
-    }
-});
+        const { query: { filter, value } } = request;
+        const result = validationResult(request)
+        console.log(result.errors)
+
+        if (filter && value) {
+            // Use dynamic property access to filter users based on the specified property and value
+            const filteredUsers = demoUserData.filter(user => user[filter] == value);
+            response.send(filteredUsers);
+        } else {
+            response.send(demoUserData);
+        }
+    });
 
 /*Get Request with specific id */
 
