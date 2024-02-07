@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { createvalidationschemas } from "../utils/validationSchemas.mjs";
 import { checkSchema, validationResult } from "express-validator";
-import { demoUserData } from "../data.mjs";
 import { resolveFindIndex } from "../utils/middlewares.mjs";
+import { demoUserData } from "../utils/data.mjs";
 
 
 const router = Router();
@@ -16,7 +16,6 @@ router.get('/', (request, response) => {
 /*Get Request with all users */
 
 router.get('/api/users',
-    checkSchema(createvalidationschemas),
     (request, response) => {
 
         const { query: { filter, value } } = request;

@@ -1,4 +1,4 @@
-import { demoUserData } from "../data.mjs"
+import { demoUserData } from "./data.mjs"
 
 
 export const resolveFindIndex = (request, response, next) => {
@@ -10,7 +10,7 @@ export const resolveFindIndex = (request, response, next) => {
 
     const findIndex = demoUserData.findIndex((user) => user.userId === parseId)
 
-    if (findIndex == -1) return response.status(404)
+    if (findIndex === -1) return response.status(404)
 
     request.findIndex = findIndex;
     next();

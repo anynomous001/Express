@@ -8,10 +8,10 @@ export const createvalidationschemas = {
             errorMessage: "UserName must have 3 - 8 characters",
         },
         notEmpty: {
-            errorMessage: "User Status can't be Empty",
+            errorMessage: "User name can't be Empty",
         },
         isString: {
-            errorMessage: "User Status must be a Empty",
+            errorMessage: "User name must be a Empty",
         },
     },
     userStatus: {
@@ -19,7 +19,7 @@ export const createvalidationschemas = {
             errorMessage: "User Status can't be Empty",
         },
         isString: {
-            errorMessage: "User Status must be a Empty",
+            errorMessage: "User Status must be a string",
         }
     }
 
