@@ -13,14 +13,7 @@ export const createvalidationschemas = {
         isString: {
             errorMessage: "User name must be a Empty",
         },
-    },
-    userStatus: {
-        notEmpty: {
-            errorMessage: "User Status can't be Empty",
-        },
-        isString: {
-            errorMessage: "User Status must be a string",
-        }
     }
+
 
 };

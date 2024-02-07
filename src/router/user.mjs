@@ -7,10 +7,12 @@ import { demoUserData } from "../utils/data.mjs";
 
 const router = Router();
 
+
 /*Get Request for home */
 
 router.get('/', (request, response) => {
-    response.statusCode(200).send('hello world')
+    response.cookie('hello', 'world', { maxAge: 60000 * 10 })
+    response.status(200).send('hello world')
 })
 
 /*Get Request with all users */
