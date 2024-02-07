@@ -1,12 +1,11 @@
 import express, { json, request, response } from "express";
-import { validationResult, checkSchema, matchedData } from "express-validator";
-import { createvalidationschemas } from "./utils/validationSchemas.mjs";
-import { demoUserData } from "./data.mjs ";
+
 import userRouter from './router/user.mjs'
 
 const app = express();
 app.use(express.json())
 app.use(userRouter)
+
 
 const PORT = process.env.PORT || 3000;
 

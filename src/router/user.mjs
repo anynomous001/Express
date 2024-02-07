@@ -1,12 +1,11 @@
 import { Router } from "express";
 import { createvalidationschemas } from "../utils/validationSchemas.mjs";
-import { validationResult } from "express-validator";
+import { checkSchema, validationResult } from "express-validator";
 import { demoUserData } from "../data.mjs";
 import { resolveFindIndex } from "../utils/middlewares.mjs";
 
+
 const router = Router();
-
-
 
 /*Get Request for home */
 

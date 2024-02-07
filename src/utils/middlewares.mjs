@@ -1,3 +1,6 @@
+import { demoUserData } from "../data.mjs"
+
+
 export const resolveFindIndex = (request, response, next) => {
     const { params: { id } } = request
     const parseId = parseInt(id)
@@ -9,6 +12,7 @@ export const resolveFindIndex = (request, response, next) => {
 
     if (findIndex == -1) return response.status(404)
 
-    request.findIndex = findIndex
-    next()
+    request.findIndex = findIndex;
+    next();
+
 }
