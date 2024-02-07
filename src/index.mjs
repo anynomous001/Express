@@ -1,77 +1,15 @@
 import express, { json, request, response } from "express";
-import { query, validationResult } from "express-validator";
-// import demoUserData from "./data";
+import { query, body, validationResult, checkSchema, matchedData } from "express-validator";
+import { createvalidationschemas } from "./utils/validationSchemas.mjs";
+import { demoUserData } from "./data.mjs ";
 
 const app = express();
 app.use(express.json())
 const PORT = process.env.PORT || 3000;
 
-const demoUserData = [
-    {
-        userId: 1,
-        userName: 'Pritam',
-        userStatus: 'Active',
-        age: 25,
-        email: 'pritam@example.com',
-        location: 'Cityville'
-    },
-    {
-        userId: 2,
-        userName: 'Jack',
-        userStatus: 'Active',
-        age: 30,
-        email: 'jack@example.com',
-        location: 'Townsville'
-    },
-    {
-        userId: 3,
-        userName: 'Donald',
-        userStatus: 'Active',
-        age: 28,
-        email: 'donald@example.com',
-        location: 'Villageton'
-    },
-    {
-        userId: 4,
-        userName: 'Eren',
-        userStatus: 'Inactive',
-        age: 22,
-        email: 'eren@example.com',
-        location: 'Hometown'
-    },
-    {
-        userId: 5,
-        userName: 'Sakura',
-        userStatus: 'Active',
-        age: 26,
-        email: 'sakura@example.com',
-        location: 'Metropolis'
-    },
-    {
-        userId: 6,
-        userName: 'Hinata',
-        userStatus: 'Inactive',
-        age: 29,
-        email: 'hinata@example.com',
-        location: 'Suburbia'
-    },
-    {
-        userId: 7,
-        userName: 'Naruto',
-        userStatus: 'Active',
-        age: 31,
-        email: 'naruto@example.com',
-        location: 'Cityscape'
-    },
-    {
-        userId: 8,
-        userName: 'Sasuke',
-        userStatus: 'Active',
-        age: 27,
-        email: 'sasuke@example.com',
-        location: 'Downtown'
-    }
-];
+
+
+
 
 const resolveFindIndex = (request, response, next) => {
     const { params: { id } } = request
@@ -95,13 +33,7 @@ app.get('/', (request, response) => {
 /*Get Request with specific id */
 
 app.get('/api/users',
-    query('filter')
-        .isString()
-        .notEmpty()
-        .withMessage('Filter must have a value')
-        .isLength({ min: 5, max: 10 })
-        .withMessage('Filter must have a value between 5 - 10 characters'),
-
+    checkSchema(createvalidationschemas),
     (request, response) => {
 
         const { query: { filter, value } } = request;
@@ -112,9 +44,8 @@ app.get('/api/users',
             // Use dynamic property access to filter users based on the specified property and value
             const filteredUsers = demoUserData.filter(user => user[filter] == value);
             response.send(filteredUsers);
-        } else {
-            response.send(demoUserData);
         }
+        if (!result.isEmpty()) response.status(403).send({ errors: result.array() })
     });
 
 /*Get Request with specific id */
@@ -125,17 +56,28 @@ app.get('/api/users/:id', resolveFindIndex, (request, response) => {
     return response.send(users)
 })
 /* Post Request */
-app.post('/api/users', (request, response) => {
-    const { body } = request;
-    console.log(body)
-    const newUser = {
-        userId: demoUserData[demoUserData.length - 1].userId + 1,
-        ...body
-    };
+app.post('/api/users', checkSchema(createvalidationschemas),
+    (request, response) => {
 
-    demoUserData.push(newUser);
-    return response.status(201).send(newUser);
-})
+        const result = validationResult(request)
+
+
+        // console.log(result.errors)
+
+
+        const { body } = request
+        const newUser = {
+            userId: demoUserData[demoUserData.length - 1].userId + 1,
+            ...body
+        };
+        console.log(result)
+
+        if (!result.isEmpty()) {
+            return response.status(400).send({ error: result.array() })
+        }
+        demoUserData.push(newUser);
+        return response.status(201).send(newUser);
+    })
 
 /* Put Request */
 app.put('/api/users/:id', resolveFindIndex, (request, response) => {

@@ -1,4 +1,4 @@
-const demoUserData = [
+export const demoUserData = [
     {
         userId: 1,
         userName: 'Pritam',
@@ -65,4 +65,3 @@ const demoUserData = [
     }
 ];
 
-// module.exports = demoUserData
